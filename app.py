@@ -1,19 +1,11 @@
 # transaction_service/app.py
 from flask import Flask, request, jsonify
-from pymongo import MongoClient
 from bson import ObjectId
-import os
 from datetime import datetime, timedelta
+from config import db, PORT
 
 app = Flask(__name__)
 
-# Configuration
-MONGODB_URI = os.getenv('MONGODB_URI', 'mongodb+srv://RattanakVicboth:Dambo123@rattanakvicboth.7whe9xy.mongodb.net/ProjDB?retryWrites=true&w=majority&appName=RattanakVicboth')
-PORT = int(os.getenv('PORT', 5002))
-
-# Database connection
-client = MongoClient(MONGODB_URI)
-db = client.get_database()
 transactions_collection = db.transactions
 
 def get_user_from_headers():
@@ -202,6 +194,7 @@ def admin_stats():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=PORT, debug=True)
