@@ -25,13 +25,18 @@ def get_user_from_headers(f):
 @get_user_from_headers
 def add_transaction():
     data = request.get_json() or {}
-    if not data.get('amount') or not data.get('type'):
+    txn_type = data.get('type')
+
+    if not data.get('amount') or not txn_type:
         return jsonify({'error': 'Amount and type required'}), 400
+
+    if txn_type not in ['income', 'expense']:
+        return jsonify({'error': 'Type must be "income" or "expense"'}), 400
 
     txn = {
         'user': g.user,
         'amount': float(data.get('amount')),
-        'type': data.get('type'),
+        'type': txn_type,
         'desc': data.get('desc', ''),
         'timestamp': datetime.utcnow()
     }
