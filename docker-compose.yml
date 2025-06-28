@@ -1,0 +1,35 @@
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongodb_container
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=expTracker
+    networks:
+      - app_network
+
+  # Transaction Service Container
+  transaction_service:
+    build: ./
+    container_name: transaction_service_container
+    ports:
+      - "5003:5003"
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/
+      - DB_NAME=expTracker
+      - PORT=5003
+      - JWT_SECRET=your-secret-key
+    depends_on:
+      - mongo
+    networks:
+      - app_network
+
+volumes:
+  mongo_data:
+
+networks:
+  app_network:
+    driver: bridge
